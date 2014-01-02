@@ -1,17 +1,40 @@
 package com.sparkydots.ml.ml1.experiment;
 
+import org.apache.log4j.Logger;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.VelocityContext;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import org.apache.velocity.tools.generic.NumberTool;
+
 public class Score {
-    public double[] vals;
-    public String[] keys;
-    public double count;
-    public Score(String[] keys) {
+    private double[] vals;
+    private String[] keys;
+    private int count;
+    private String outputTemplate;
+
+    public static Logger log = Logger.getLogger(Score.class);
+
+    public Score(String[] keys, String outputTemplate) {
         this.keys = keys;
         vals = new double[this.keys.length];
+        this.outputTemplate = outputTemplate;
     }
     public Score(int num) {
         vals = new double[num];
         keys = new String[num];
         count = 0;
+    }
+
+    public String[] getKeys() {
+        return keys;
+    }
+    public double[] getVals() {
+        return vals;
+    }
+    public int getCount() {
+        return count;
     }
     public void addResult(ExperimentResult r) {
         for (int i = 0; i < keys.length; i++) {
@@ -20,11 +43,12 @@ public class Score {
         count++;
     }
     public void printResults() {
-        System.out.println("---results---");
-        System.out.println("total number of runs: " + count);
-        System.out.println("(label, sum, avg)");
-        for (int i = 0; i < keys.length; i++) {
-            System.out.println(keys[i] + ": " + vals[i] + ": " + vals[i]/count);
-        }
+        VelocityContext ctx = new VelocityContext();
+        ctx.put("score", this); 
+        ctx.put("number", new NumberTool());
+        StringWriter writer = new StringWriter();
+        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(this.outputTemplate));
+        Velocity.evaluate(ctx, writer, "", reader);
+        log.info(writer.toString());
     }
 }

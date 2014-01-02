@@ -2,6 +2,8 @@ package com.sparkydots.ml.ml1;
 
 import com.sparkydots.ml.ml1.experiment.*;
 import java.util.Random;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
 
 class CoinExperimentFactory implements ExperimentFactory {
     public static final String PROB_HEADS = "prob_heads";
@@ -69,8 +71,11 @@ class CoinExperimentFactory implements ExperimentFactory {
                 }
             }
             result.setArg("n1", curV1);
+            result.setArg("n1sq", curV1 * curV1);
             result.setArg("nrand", curVrand);
+            result.setArg("nrandsq", curVrand * curVrand);
             result.setArg("nmin", curVmin);
+            result.setArg("nminsq", curVmin * curVmin);
         }    
     }
 
@@ -80,20 +85,38 @@ class CoinExperimentFactory implements ExperimentFactory {
 }
 
 public class Experiment0110 {
+    private static Logger log = Logger.getLogger(Experiment0110.class);
+
     public static void main(String[] args) {
+        PropertyConfigurator.configure(Experiment0110.class.getClassLoader().getResource("log4j.properties"));
         int numOfRuns = 1;
         try {
             numOfRuns = Integer.parseInt(args[0]);
         } catch(Exception e) {}
-        System.out.println("Number of runs is: " + numOfRuns);
+        log.info("Number of runs is: " + numOfRuns);
         ExperimentInput input = new ExperimentInput();
         input.setArg(CoinExperimentFactory.FAIR_COIN, +100);
         //input.setArg(CoinExperimentFactory.PROB_HEADS, 0.5);
         ExperimentSetup es = new ExperimentSetup(input, numOfRuns,
                 new CoinExperimentFactory(),
-                true, new String[] { "n1", "nrand", "nmin" });
+                true, new String[] { "n1", "n1sq", "nrand", "nrandsq", "nmin", "nminsq" },
+                "scoreCoinExperiment.vm");
         es.run();
         es.getScore().printResults();
+        /*
+        double n = es.getScore().count;
+        double n1 = es.getScore().getArg("n1");
+        double nrand = es.getScore().getArg("rand");
+        double nmin = es.getScore().getArg("nmin");
+        double n1sq = es.getScore().getArg("n1sq");
+        double nrandsq = es.getScore().getArg("randsq");
+        double nminsq = es.getScore().getArg("nminsq");
+
+        n1 = n1sq/n - n1*n1/n;
+        nrand = nrandsq/n - nrand*nrand/n;
+        nmin = nminsq/n - nmin*nmin/n;
+        log.info("vars: " + n1 +";"+nrand+";"+nmin);
+        */
     }
 }
 

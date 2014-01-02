@@ -8,12 +8,12 @@ public class ExperimentSetup {
     public Score runningScore;
     public ExperimentFactory experiments;
     
-    public ExperimentSetup(ExperimentInput input, int num, ExperimentFactory experiments, boolean oneByOne, String[] scoreKeys) {
+    public ExperimentSetup(ExperimentInput input, int num, ExperimentFactory experiments, boolean oneByOne, String[] scoreKeys, String template) {
         this.input = input;
         this.num = num;
         this.experiments = experiments;
         if (oneByOne) {
-            runningScore = new Score(scoreKeys);
+            runningScore = new Score(scoreKeys, template);
         } else {
             this.results = new ExperimentResult[this.num];
         }

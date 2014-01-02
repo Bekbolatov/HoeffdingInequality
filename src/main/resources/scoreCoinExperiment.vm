@@ -1,0 +1,11 @@
+#set( $C = ':' )
+#set ( $end = $score.keys.size() - 1 ) 
+====== Experiment results ========
+Number of runs: $score.count
+Label, sum, avg
+--------------------
+#foreach($i in [0 .. $end])
+    #set ( $avg = $score.vals[ $i ]/$score.count )
+    $score.keys[ $i ]: $number.format("#0.000000", $score.vals[ $i ]): $number.format("#0.000000", $avg)
+#end
+==================================
