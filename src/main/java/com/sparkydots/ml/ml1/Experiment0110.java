@@ -103,20 +103,6 @@ public class Experiment0110 {
                 "scoreCoinExperiment.vm");
         es.run();
         es.getScore().printResults();
-        /*
-        double n = es.getScore().count;
-        double n1 = es.getScore().getArg("n1");
-        double nrand = es.getScore().getArg("rand");
-        double nmin = es.getScore().getArg("nmin");
-        double n1sq = es.getScore().getArg("n1sq");
-        double nrandsq = es.getScore().getArg("randsq");
-        double nminsq = es.getScore().getArg("nminsq");
-
-        n1 = n1sq/n - n1*n1/n;
-        nrand = nrandsq/n - nrand*nrand/n;
-        nmin = nminsq/n - nmin*nmin/n;
-        log.info("vars: " + n1 +";"+nrand+";"+nmin);
-        */
     }
 }
 
