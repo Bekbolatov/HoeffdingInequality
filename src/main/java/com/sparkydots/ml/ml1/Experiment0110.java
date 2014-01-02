@@ -6,11 +6,19 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.Logger;
 
 class CoinExperimentFactory implements ExperimentFactory {
+    public static String[] statNames = new String[] { "n1", "n1sq", "nrand", "nrandsq", "nmin", "nminsq" };
+    public static String templateName =  "scoreCoinExperiment.vm";
     public static final String PROB_HEADS = "prob_heads";
     public static final String FAIR_COIN = "fair_coin"; //if >0 then fair coin 0.5
     public static final int numBins = 1000;
     public static final int numSamples = 10;
 
+    public String[] getStatNames() {
+        return statNames;
+    }
+    public String getTemplateName() {
+        return templateName;
+    }
     class CoinExperiment extends Experiment {
         private Random rnd;
         private boolean fairCoin = true;
@@ -89,20 +97,22 @@ public class Experiment0110 {
 
     public static void main(String[] args) {
         PropertyConfigurator.configure(Experiment0110.class.getClassLoader().getResource("log4j.properties"));
+        log.info("preparing experiment setup ...");
+        int numOfRuns = getNumberOfRuns(args);
+        ExperimentInput input = new ExperimentInput();
+        input.setArg(CoinExperimentFactory.FAIR_COIN, +100);
+        //input.setArg(CoinExperimentFactory.PROB_HEADS, 0.5);
+        ExperimentSetup es = new ExperimentSetup(input, numOfRuns, new CoinExperimentFactory(), true);
+        es.run();
+        es.getScore().printResults();
+    }
+    private static int getNumberOfRuns(String[] args) {
         int numOfRuns = 1;
         try {
             numOfRuns = Integer.parseInt(args[0]);
         } catch(Exception e) {}
-        log.info("Number of runs is: " + numOfRuns);
-        ExperimentInput input = new ExperimentInput();
-        input.setArg(CoinExperimentFactory.FAIR_COIN, +100);
-        //input.setArg(CoinExperimentFactory.PROB_HEADS, 0.5);
-        ExperimentSetup es = new ExperimentSetup(input, numOfRuns,
-                new CoinExperimentFactory(),
-                true, new String[] { "n1", "n1sq", "nrand", "nrandsq", "nmin", "nminsq" },
-                "scoreCoinExperiment.vm");
-        es.run();
-        es.getScore().printResults();
+        return numOfRuns;
     }
+
 }
 
